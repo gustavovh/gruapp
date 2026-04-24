@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@workspace/integrations';
 import { Truck, MapPin, Navigation, Phone, ShieldCheck } from 'lucide-react';
 
-mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
 
 const PublicTracking = ({ serviceId }: { serviceId: string }) => {
   const mapContainer = useRef<HTMLDivElement>(null);

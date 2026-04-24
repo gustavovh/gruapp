@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { supabase } from '@workspace/integrations/supabase';
+import { supabase } from '@workspace/integrations';
 
 // Mapbox Token Placeholder - User should update this
-mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
 
 interface DriverPoint {
   driverId: number;
