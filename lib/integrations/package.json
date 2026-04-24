@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    ".": "./supabase/client.ts",
     "./supabase": "./supabase/client.ts"
   },
   "dependencies": {
