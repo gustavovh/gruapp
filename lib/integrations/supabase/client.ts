@@ -17,9 +17,9 @@ const supabaseUrl = getEnv('VITE_SUPABASE_URL') || getEnv('SUPABASE_URL') || get
 const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY') || getEnv('SUPABASE_ANON_KEY') || getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY') || '';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn("Supabase credentials not found. Image uploads will fail. URL:", supabaseUrl);
+  console.error("CRITICAL: Supabase credentials missing!");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseAnonKey || 'placeholder');
 
 export const BUCKET_NAME = 'service-evidence';

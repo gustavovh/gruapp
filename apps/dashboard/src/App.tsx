@@ -9,6 +9,21 @@ function App() {
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState('overview');
 
+  // Fallback if env vars are missing
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return (
+      <div className="h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-8 text-center">
+        <AlertCircle size={48} className="text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+        <p className="opacity-50 max-w-md">
+          Faltan las variables de entorno en Vercel (VITE_SUPABASE_URL). 
+          Por favor, configúralas en el panel de Vercel y haz un "Redeploy".
+        </p>
+      </div>
+    );
+  }
+
   return (
     <Layout 
       onNewDispatch={() => setIsDispatchModalOpen(true)}
