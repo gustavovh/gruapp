@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/tracking/(.*)",
+      "destination": "/apps/dashboard/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/apps/dashboard/index.html"
+    }
+  ]
+}
