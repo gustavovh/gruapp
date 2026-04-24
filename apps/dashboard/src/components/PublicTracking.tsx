@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { supabase } from '@workspace/integrations/supabase';
+import { supabase } from '@workspace/integrations';
 import { Truck, MapPin, Navigation, Phone, ShieldCheck } from 'lucide-react';
 
 mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
