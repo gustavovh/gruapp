@@ -1,28 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
 import Layout from './components/Layout';
 import DispatchModal from './components/DispatchModal';
 import LiveMap from './components/LiveMap';
 import HistoryView from './components/HistoryView';
+import PublicTracking from './components/PublicTracking';
 import { Truck, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 
-function App() {
+function AdminDashboard() {
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState('overview');
-
-  // Fallback if env vars are missing
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  if (!supabaseUrl) {
-    return (
-      <div className="h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-8 text-center">
-        <AlertCircle size={48} className="text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
-        <p className="opacity-50 max-w-md">
-          Faltan las variables de entorno en Vercel (VITE_SUPABASE_URL). 
-          Por favor, configúralas en el panel de Vercel y haz un "Redeploy".
-        </p>
-      </div>
-    );
-  }
 
   return (
     <Layout 
@@ -43,31 +30,13 @@ function App() {
               <p className="text-white/50">Monitoreo en tiempo real de operaciones de grúas</p>
             </header>
 
-            {/* Metrics Bar */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard 
-                title="Servicios Activos" 
-                value="12" 
-                icon={<Clock size={24} className="text-yellow-500" />} 
-              />
-              <StatCard 
-                title="Flota Total" 
-                value="24" 
-                icon={<Truck size={24} className="text-blue-500" />} 
-              />
-              <StatCard 
-                title="Grúas Libres" 
-                value="8" 
-                icon={<CheckCircle2 size={24} className="text-green-500" />} 
-              />
-              <StatCard 
-                title="Alertas" 
-                value="2" 
-                icon={<AlertCircle size={24} className="text-red-500" />} 
-              />
+              <StatCard title="Servicios Activos" value="12" icon={<Clock size={24} className="text-yellow-500" />} />
+              <StatCard title="Flota Total" value="24" icon={<Truck size={24} className="text-blue-500" />} />
+              <StatCard title="Grúas Libres" value="8" icon={<CheckCircle2 size={24} className="text-green-500" />} />
+              <StatCard title="Alertas" value="2" icon={<AlertCircle size={24} className="text-red-500" />} />
             </div>
 
-            {/* Live Tracking Map */}
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden h-[600px] backdrop-blur-sm shadow-2xl">
               <LiveMap />
             </div>
@@ -84,6 +53,34 @@ function App() {
         )}
       </div>
     </Layout>
+  );
+}
+
+function TrackingWrapper() {
+  const { id } = useParams();
+  return <PublicTracking serviceId={id || ''} />;
+}
+
+function App() {
+  // Config check
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return (
+      <div className="h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-8 text-center">
+        <AlertCircle size={48} className="text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+        <p className="opacity-50">Faltan variables en Vercel.</p>
+      </div>
+    );
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/tracking/:id" element={<TrackingWrapper />} />
+        <Route path="*" element={<AdminDashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

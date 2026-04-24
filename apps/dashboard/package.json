@@ -12,7 +12,6 @@
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.16.2",
     "@tanstack/react-query": "catalog:",
-    "mapbox-gl": "^3.10.1",
     "@workspace/db": "workspace:*",
     "@workspace/integrations": "workspace:*",
     "axios": "^1.15.2",
@@ -20,16 +19,18 @@
     "clsx": "catalog:",
     "framer-motion": "catalog:",
     "lucide-react": "catalog:",
+    "mapbox-gl": "^3.10.1",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-router-dom": "^7.14.2",
     "tailwind-merge": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:",
+    "@types/mapbox-gl": "^3.4.3",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/mapbox-gl": "^3.4.3",
     "@vitejs/plugin-react": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "^5.9.2",
