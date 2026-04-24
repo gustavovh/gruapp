@@ -35,9 +35,7 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
-    if (isOpen) {
-      axios.get(`${API_URL}/api/drivers`).then(res => setDrivers(res.data));
-    }
+    // We no longer fetch drivers here as assignment is automatic
   }, [isOpen]);
 
   const handleEstimate = async () => {
