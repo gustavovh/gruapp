@@ -1,0 +1,23 @@
+{
+  "name": "@workspace/api",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.4",
+    "@supabase/supabase-js": "^2.104.1",
+    "@workspace/db": "workspace:*",
+    "expo-server-sdk": "^6.1.0",
+    "hono": "^4.7.2",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "^5.9.2"
+  }
+}
