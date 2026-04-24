@@ -16,9 +16,11 @@ const HistoryView = () => {
   const [loading, setLoading] = useState(true);
   const [filterDriver, setFilterDriver] = useState('');
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   useEffect(() => {
     // In a real app we'd fetch with filters
-    axios.get('http://localhost:3000/api/services').then(res => {
+    axios.get(`${API_URL}/api/services`).then(res => {
       // Mocked cleanup/sorting for "Completed" services
       setServices(res.data);
       setLoading(false);

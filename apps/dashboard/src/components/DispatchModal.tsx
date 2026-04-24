@@ -32,10 +32,11 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
   });
   const [estimate, setEstimate] = useState<PricingEstimate | null>(null);
   const [loading, setLoading] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
     if (isOpen) {
-      axios.get('http://localhost:3000/api/drivers').then(res => setDrivers(res.data));
+      axios.get(`${API_URL}/api/drivers`).then(res => setDrivers(res.data));
     }
   }, [isOpen]);
 
@@ -44,7 +45,7 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
     try {
       // Mocked distance for now, normally from Mapbox
       const mockDistance = 12.5; 
-      const res = await axios.post('http://localhost:3000/api/pricing/estimate', {
+      const res = await axios.post(`${API_URL}/api/pricing/estimate`, {
         vehicleType: formData.vehicleType,
         distanceKm: mockDistance,
         maneuverExtras: Number(formData.maneuverExtras)
@@ -62,7 +63,7 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.post('http://localhost:3000/api/services', {
+      await axios.post(`${API_URL}/api/services`, {
         ...formData,
         driverId: Number(formData.driverId),
         originLat: -25.2867, // Mocked
