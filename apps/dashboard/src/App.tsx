@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import DispatchModal from './components/DispatchModal';
 import LiveMap from './components/LiveMap';
