@@ -20,13 +20,11 @@ interface PricingEstimate {
 const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [step, setStep] = useState(1);
   const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
     originAddress: '',
     destinationAddress: '',
     vehicleType: 'light',
-    driverId: '',
     maneuverExtras: 0,
     totalDistance: 0,
   });
@@ -63,12 +61,11 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
     try {
       await axios.post(`${API_URL}/api/services`, {
         ...formData,
-        driverId: Number(formData.driverId),
         originLat: -25.2867, // Mocked
         originLng: -57.6470,
         destLat: -25.3200,
         destLng: -57.5800,
-        status: 'pending'
+        status: 'searching'
       });
       alert("Service dispatched successfully!");
       onClose();
@@ -206,25 +203,14 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                 </div>
               </div>
 
-              {/* Assignment */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-white/50 uppercase tracking-wider">Assign Driver</label>
-                  <div className="flex gap-4">
-                    <div className="flex-1 relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-                      <select 
-                        value={formData.driverId}
-                        onChange={e => setFormData({...formData, driverId: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:border-blue-500/50 outline-none transition-all appearance-none"
-                      >
-                        <option value="">Select a driver...</option>
-                        {drivers.map(d => (
-                          <option key={d.id} value={d.id}>{d.fullName}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+              {/* Automatic Assignment Banner */}
+              <div className="p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-500 shadow-lg shadow-blue-500/10">
+                  <Truck size={24} />
+                </div>
+                <div>
+                  <p className="font-bold text-blue-400">Asignación Inteligente Activa</p>
+                  <p className="text-white/40 text-[11px] leading-tight">El sistema notificará automáticamente a la grúa disponible más cercana al cliente.</p>
                 </div>
               </div>
 
@@ -237,7 +223,7 @@ const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                 </button>
                 <button 
                   onClick={handleSubmit}
-                  disabled={loading || !formData.driverId}
+                  disabled={loading}
                   className="flex-[2] bg-green-600 hover:bg-green-500 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-500/20 active:scale-[0.98] disabled:opacity-50"
                 >
                   {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (
