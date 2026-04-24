@@ -20,6 +20,7 @@ interface PricingEstimate {
 const DispatchModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [step, setStep] = useState(1);
   const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
     originAddress: '',
