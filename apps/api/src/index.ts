@@ -2,10 +2,11 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { db, servicesTable, configRatesTable, usersTable } from "@workspace/db";
+import { db, servicesTable, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { calculatePrice } from "./services/pricing";
 import { sendPushNotification } from "./services/notifications";
+import { autoAssignDriver } from "./services/dispatch";
 
 const app = new Hono();
 
@@ -15,9 +16,12 @@ app.use("*", cors());
 app.get("/", (c) => {
   return c.json({
     message: "GruaDirect API is running",
-    version: "0.1.0",
+    version: "0.1.1",
   });
 });
+
+// Health check
+app.get("/health", (c) => c.json({ status: "ok" }));
 
 // Get all drivers
 app.get("/api/drivers", async (c) => {
@@ -29,9 +33,6 @@ app.get("/api/drivers", async (c) => {
   }
 });
 
-// Health check
-app.get("/health", (c) => c.json({ status: "ok" }));
-
 // Get all services
 app.get("/api/services", async (c) => {
   try {
@@ -42,7 +43,7 @@ app.get("/api/services", async (c) => {
   }
 });
 
-// Estimate price before creating service
+// Estimate price
 app.post("/api/pricing/estimate", async (c) => {
   try {
     const input = await c.req.json();
@@ -53,12 +54,12 @@ app.post("/api/pricing/estimate", async (c) => {
   }
 });
 
-// Create a new service
+// Create a new service (with Auto-Assignment)
 app.post("/api/services", async (c) => {
   try {
     const body = await c.req.json();
     
-    // Auto-calculate price if distance and vehicleType are provided
+    // Auto-calculate price
     if (body.vehicleType && body.totalDistance) {
       const pricing = await calculatePrice({
         vehicleType: body.vehicleType,
@@ -73,28 +74,33 @@ app.post("/api/services", async (c) => {
       body.totalAmount = pricing.totalAmount;
     }
 
+    // Force 'searching' status for automatic flow
+    body.status = 'searching';
+
     const [newService] = await db.insert(servicesTable).values(body).returning();
 
-    // Send push notification to assigned driver
-    if (body.driverId) {
-      const [driver] = await db.select().from(usersTable).where(eq(usersTable.id, body.driverId)).limit(1);
-      if (driver && driver.pushToken) {
-        await sendPushNotification(
-          driver.pushToken,
-          "New Service Assigned",
-          `Towing for ${body.customerName} - From ${body.originAddress}`,
-          { serviceId: newService.id }
-        );
-      }
+    // TRIGGER AUTO-ASSIGNMENT BRAIN
+    const assignedDriver = await autoAssignDriver(newService.id, body.originLat, body.originLng);
+
+    if (assignedDriver && assignedDriver.pushToken) {
+      await sendPushNotification(
+        assignedDriver.pushToken,
+        "¡Nuevo Servicio Cerca!",
+        `Solicitud de grúa en ${body.originAddress}. Distancia mínima.`,
+        { serviceId: newService.id, type: 'OFFER' }
+      );
     }
 
-    return c.json(newService, 201);
+    return c.json({ 
+      ...newService, 
+      assignedDriver: assignedDriver ? { id: assignedDriver.id, name: assignedDriver.fullName } : null 
+    }, 201);
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
   }
 });
 
-// Update service status
+// Update status
 app.patch("/api/services/:id", async (c) => {
   try {
     const id = parseInt(c.req.param("id"));
@@ -113,8 +119,6 @@ app.patch("/api/services/:id", async (c) => {
 });
 
 const port = Number(process.env.PORT) || 3000;
-console.log(`Server is running on port ${port}`);
-
 serve({
   fetch: app.fetch,
   port,

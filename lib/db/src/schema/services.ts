@@ -4,6 +4,7 @@ import { z } from "zod";
 import { usersTable } from "./users";
 
 export const serviceStatusEnum = pgEnum("service_status", [
+  "searching",
   "pending",
   "assigned",
   "arriving",
