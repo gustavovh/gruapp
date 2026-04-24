@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import { HashRouter, Routes, Route, useParams } from 'react-router-dom';
 import Layout from './components/Layout';
 import DispatchModal from './components/DispatchModal';
 import LiveMap from './components/LiveMap';
@@ -75,12 +75,12 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/tracking/:id" element={<TrackingWrapper />} />
         <Route path="*" element={<AdminDashboard />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
